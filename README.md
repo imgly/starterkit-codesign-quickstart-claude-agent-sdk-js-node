@@ -1,10 +1,17 @@
-# Quickstart: Claude Agent SDK — a CoDesign starter kit
+<p align="center">
+  <img src=".github/assets/header.png" width="1280" alt="Design agent on the Claude Agent SDK: a text brief goes in, a finished design comes out as design.png and design.imgly">
+</p>
 
-Type a brief, and a design agent on the Claude Agent SDK designs it with
-CoDesign's tools and hands you a PNG and an editable design.
+# Claude Agent SDK Design Agent — a CoDesign SDK Quickstart
+
+A Node.js starter kit that runs a design agent on the Claude Agent SDK: type a
+brief, and the agent designs it with IMG.LY's CoDesign SDK and hands you a PNG
+and an editable design. It is for engineers who want to add AI design
+generation to their product with the Claude Agent SDK.
 
 **Documentation:**
-[Quickstart: Claude Agent SDK](https://img.ly/docs/cesdk/codesign/starter-kits/quickstart-claude-agent-sdk-cdsqca/)
+[Quickstart: Claude Agent SDK](https://img.ly/docs/cesdk/codesign/starter-kits/quickstart-claude-agent-sdk-cdsqca/) ·
+**The same quickstart on:** [Vercel AI SDK](https://github.com/imgly/starterkit-codesign-quickstart-ai-sdk-js-node) · [OpenAI Agents SDK](https://github.com/imgly/starterkit-codesign-quickstart-openai-agents-js-node) · [LangChain.js](https://github.com/imgly/starterkit-codesign-quickstart-langchain-js-node) · [Mastra](https://github.com/imgly/starterkit-codesign-quickstart-mastra-js-node) · [pi](https://github.com/imgly/starterkit-codesign-quickstart-pi-js-node)
 
 **It needs your own Anthropic API key** (`ANTHROPIC_API_KEY` in `.env`) for
 the model: IMG.LY's AI gateway does not serve the Claude Agent SDK's API
@@ -18,6 +25,16 @@ here IMG.LY's `imgly/codesign-executor` Docker image on your machine. The
 **Claude Agent SDK** (`@anthropic-ai/claude-agent-sdk`) is Anthropic's agent
 loop, the one Claude Code runs on.
 
+## What You Get
+
+- One script, `design.mjs`, that hands CoDesign's design tools to
+  the Claude Agent SDK and runs the agent on your brief.
+- Two files per run: `out/design.png`, and `out/design.imgly`, the editable
+  design with its images and fonts.
+- The design engine as IMG.LY's `imgly/codesign-executor` Docker image,
+  started with `npm run executor`.
+- The model, Claude, through your Anthropic API key.
+
 ## What's Inside
 
 ```
@@ -29,11 +46,10 @@ tsconfig.json   # `npm run check` type-checks design.mjs
 
 ## Run It
 
-You need Docker, Node.js 22 or newer, a **CoDesign license key** from IMG.LY
-([contact sales](https://img.ly/forms/contact-sales/)), which starts the
+You need Docker, Node.js 22 or newer, a **CoDesign license key**, which starts the
 design engine and pays for each exported file, and an **Anthropic API key**
 ([console.anthropic.com](https://console.anthropic.com/settings/keys)), which
-pays for the model.
+pays for the model. [Contact sales](https://img.ly/forms/contact-sales/) to get a CoDesign license key.
 
 ```sh
 npm install
@@ -136,10 +152,27 @@ model's tokens are charged to your Anthropic account.
 | `executor_unreachable`                                      | The executor is not running or restarting: check `curl http://localhost:8080/health`.                                                                            |
 | `The model stopped early`                                   | The model reached the 60-turn limit or stopped for another reason; nothing was exported.                                                                         |
 
+## FAQ
+
+### Which models can it use?
+
+Claude models: set `MODEL` in `.env`, for example `claude-sonnet-5`. The
+default is `claude-opus-5`.
+
+### Do I need an account with a model provider?
+
+Yes, an Anthropic API key: IMG.LY's AI gateway does not serve Anthropic's
+Messages API, which the Claude Agent SDK calls.
+
+### Can a person keep editing the design?
+
+Yes. `out/design.imgly` opens in a CE.SDK editor of exactly the version the
+executor runs, which the SDK exports as `CESDK_VERSION`.
+
 ## License
 
 This kit is licensed under IMG.LY's license; see `LICENSE.md`. Using the CoDesign
-SDK and the executor needs a CoDesign license key from IMG.LY. The Claude Agent
+SDK and the executor needs a CoDesign license key. [Contact sales](https://img.ly/forms/contact-sales/) to get a CoDesign license key. The Claude Agent
 SDK is Anthropic's, under Anthropic's terms.
 
 ---
