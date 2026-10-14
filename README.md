@@ -150,7 +150,7 @@ model's tokens are charged to your Anthropic account.
 | `Set ANTHROPIC_API_KEY in .env`                             | Anthropic refused the key, or none is set: set `ANTHROPIC_API_KEY` in `.env`.                                                                                    |
 | `missing or wrong executor token`                           | The executor answered 401 with another token: after changing `EXECUTOR_TOKEN`, run `npm run executor:stop` and `npm run executor` again so the executor gets it. |
 | `executor_unreachable`                                      | The executor is not running or restarting: check `curl http://localhost:8080/health`.                                                                            |
-| `The model stopped early`                                   | The model reached the 60-turn limit or stopped for another reason; nothing was exported.                                                                         |
+| `The model stopped early`                                   | The model reached the 60-turn limit or stopped for another reason; no PNG was exported, and the design so far is in `out/design.imgly`.                          |
 
 ## FAQ
 

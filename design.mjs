@@ -66,11 +66,36 @@ server.server.setRequestHandler(
   async ({ params }, { signal }) => {
     const tool = codesign.tools.find((t) => t.name === params.name);
     if (!tool) throw new Error(`No tool named ${params.name}`);
-    const result = await tool.call(params.arguments ?? {}, { signal });
+    const result = await tool
+      .call(params.arguments ?? {}, { signal })
+      .catch((err) => {
+        console.log(`✗ ${tool.name} (${err.kind ?? err.name})`); // rejected: the executor or your store failed
+        throw err;
+      });
     console.log(`${result.isError ? '✗' : '✓'} ${tool.name}`);
     return result; // a result with isError reads to the model as a failed call
   }
 );
+
+/** A failure in one line: the SDK error's kind and the first line of its message, not a stack or a request body. */
+const cause = (err) =>
+  `${err?.kind ? `${err.kind}: ` : ''}${String(err instanceof Error ? err.message : err).split('\n')[0]}`;
+
+// The free .imgly first: when the billed PNG export fails, or the run ends early, the design the model made is kept.
+async function save(withPNG) {
+  let file = 'out/design.imgly';
+  try {
+    await mkdir('out', { recursive: true });
+    await writeFile(file, await codesign.export('imgly'));
+    if (!withPNG) return console.error(`Wrote ${file}, the design so far.`);
+    file = 'out/design.png';
+    await writeFile(file, await codesign.export('png'));
+    console.log('Wrote out/design.png and out/design.imgly');
+  } catch (err) {
+    console.error(`Could not write ${file}: ${cause(err)}`);
+    process.exitCode = 1;
+  }
+}
 
 const started = Date.now();
 const run = query({
@@ -104,7 +129,7 @@ try {
     if (message.type === 'result') result = message;
   }
 } catch (err) {
-  if (!result) throw err; // after a failed result the SDK throws too; that result says why
+  if (!result) console.error(`The run failed: ${cause(err)}`); // after a failed result the SDK throws too; that result says why
 }
 
 if (result?.subtype === 'success' && !result.is_error) {
@@ -116,15 +141,13 @@ if (result?.subtype === 'success' && !result.is_error) {
     `${result.num_turns} steps, ${Math.round((Date.now() - started) / 1000)} s, ` +
       `${input} input / ${u.output_tokens} output tokens`
   );
-  await mkdir('out', { recursive: true });
-  await writeFile('out/design.png', await codesign.export('png'));
-  await writeFile('out/design.imgly', await codesign.export('imgly'));
-  console.log('Wrote out/design.png and out/design.imgly');
+  await save(true);
 } else {
   const why = result?.subtype === 'success' ? result.result : result?.subtype;
-  console.error(`The model stopped early (${why}); nothing exported.`);
+  console.error(`The model stopped early (${why}).`);
   if (authFailed)
     console.error('Set ANTHROPIC_API_KEY in .env to your Anthropic API key.');
   process.exitCode = 1;
+  await save(false);
 }
 await codesign.release(); // ends the design's session now; the engine closes about 30 s later
