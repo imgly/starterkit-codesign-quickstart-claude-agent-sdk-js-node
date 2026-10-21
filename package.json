@@ -6,13 +6,13 @@
   "description": "A CoDesign SDK starter kit: a design agent on the Claude Agent SDK turns a brief into a PNG and an editable design, with the executor in Docker on your machine.",
   "scripts": {
     "start": "node --env-file=.env design.mjs",
-    "executor": "docker rm -f codesign-executor-claude-agent-sdk >/dev/null 2>&1; docker run -d --name codesign-executor-claude-agent-sdk --restart always -p 127.0.0.1:8080:8080 --env-file .env --tmpfs /var/lib/codesign-executor:uid=1000 imgly/codesign-executor:1.83.0",
+    "executor": "docker rm -f codesign-executor-claude-agent-sdk >/dev/null 2>&1; docker run -d --name codesign-executor-claude-agent-sdk --restart always -p 127.0.0.1:8080:8080 --env-file .env --tmpfs /var/lib/codesign-executor:uid=1000 imgly/codesign-executor:1.84.0",
     "executor:stop": "docker rm -f codesign-executor-claude-agent-sdk",
     "check": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "0.3.294",
-    "@imgly/codesign-sdk": "1.83.0",
+    "@imgly/codesign-sdk": "1.84.0",
     "@modelcontextprotocol/sdk": "1.32.1"
   },
   "devDependencies": {
